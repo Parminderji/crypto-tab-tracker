@@ -37,13 +37,33 @@
     </script>
 
     <script>
-        var par, prc, btc, sym, col, pct, arr, del, up, dwn, fav;
+        var par, prc, btc, sym, col, pct, arr, del, up, dwn, fav, lim, add;
         par = getParameterByName('track');
         if (par != null) par = par.toLowerCase(); else redirect();
-        fav = false;
         del = 15;
         up = "#2ECC71";
         dwn = "#E74C3C";
+        fav = false;
+        lim = 20;
+
+        /* Populate header with top 20 currencies*/
+        function populate() {
+            $.ajax({
+                type: "GET",
+                url: "https://api.coinmarketcap.com/v1/ticker/?limit=" + lim,
+                dataType: "json",
+                success: function(result) {
+                    for(var i = 0; i < lim; i++) {
+                        add = "";
+
+                        if (i<lim-1){
+                            add = "&nbsp;&#183;&nbsp;";
+                        }
+                        document.getElementById("header").innerHTML+='<a href="https://banack.me/crypto?track=' + result[i].name + '">' + result[i].name + '</a>' + add;
+                    }
+                },
+            });
+        }
 
         function update() {
             $.ajax({
@@ -90,7 +110,12 @@
             }
             setTimeout(update, del * 1000);
         }
-        update();
+
+        /* Init calls */
+        window.onload = function() {
+            update();
+            populate();
+        }
 
         /* Non-successful pull, refresh page to BTC tracking*/
         function redirect() {
@@ -116,7 +141,7 @@
             color: #1C2A39;
         }
 
-        .header {
+        #header {
             background-color: #FFFFFF;
             position: relative;
             height: 72px;
@@ -146,8 +171,8 @@
 </head>
 
 <body>
-    <div class="header" align="center">
-        <p>Crypto Tab Tracker | Change the URL <i>track</i> parameter to your <a href="https://coinmarketcap.com" target="_blank">desired currency</a>.</p>
+    <div id="header" align="center">
+        <p>Crypto Tab Tracker | Change the URL <i>track</i> parameter to your <a href="https://coinmarketcap.com" target="_blank">desired currency</a>.<br></p>
     </div>
     <div class="footer" align="center">
         <p>XRB @ xrb_1cwymjoodjx9okzqf59nqpdo5ab9unbp61a5reu1kaomzo7ztssdd6nh7fbx<br>
