@@ -8,7 +8,7 @@ This heavily makes use of [Coin Market Cap's API](https://api.coinmarketcap.com)
 
 ## Authors
 
-* **Zack Banack** - *Initial work* - [zbancak](https://github.com/zbanack)
+* **Zack Banack** - *Initial work* - [zbanack](https://github.com/zbanack)
 
 ## License
 
