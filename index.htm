@@ -59,7 +59,7 @@
                         if (i<lim-1){
                             add = "&nbsp;&#183;&nbsp;";
                         }
-                        document.getElementById("header").innerHTML+='<a href="https://banack.me/crypto?track=' + result[i].name + '">' + result[i].name + '</a>' + add;
+                        document.getElementById("header").innerHTML+='<a href="https://banack.me/crypto?track=' + result[i].name.replace(/\s+/g, '-') + '">' + result[i].name + '</a>' + add;
                     }
                 },
             });
