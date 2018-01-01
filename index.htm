@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" value="text/html; charset=ISO-8859-1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Crypto Tab Tracker | Real-time USD newtab-tracking for cryptocurrencies</title>
+    <meta property="og:title" content="Crypto Tab Tracker | Real-time USD newtab-tracking for cryptocurrencies" />
+    <meta name="description" content="Real-time USD newtab-tracking for cryptocurrencies" />
+    <meta property="og:description" content="Real-time USD newtab-tracking for cryptocurrencies" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-91441927-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'UA-91441927-2');
+    </script>
+
+    <!--URL Parameters (https://stackoverflow.com/a/901144)-->
+    <script>
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+    </script>
+
+    <script>
+        var par, prc, btc, sym, col, pct, arr, del, up, dwn, fav;
+        par = getParameterByName('track');
+        if (par != null) par = par.toLowerCase(); else redirect();
+        fav = false;
+        del = 15;
+        up = "#2ECC71";
+        dwn = "#E74C3C";
+
+        function update() {
+            $.ajax({
+                type: "GET",
+                url: "https://api.coinmarketcap.com/v1/ticker/" + par + "/",
+                dataType: "json",
+                success: function(result) {
+                    success = true;
+                    prc = result[0].price_usd;
+                    btc = result[0].price_btc;
+                    sym = result[0].symbol;
+                    pct = parseFloat(result[0].percent_change_1h);
+                    col = up;
+                    arr = "&#9652;";
+                    if (pct < 0) {
+                        col = dwn;
+                        arr = "&#9662;";
+                    }
+
+                    /* Update div */
+                    document.getElementById("container_price").innerHTML =
+                        '<div><b>' + sym + '</b><br></div>' +
+                        '<div style="color:' + col + '">$' + prc + ' (' + arr + pct + '%)<br></div>' +
+                        '<div style="color:#5C6A79">' + btc + ' BTC</div>';
+
+                    /* Update title */
+                    document.title = prc + ' USD/' + sym;
+                },
+                error: function(result) {
+                    redirect();
+                }
+            });
+
+            /* Set favicon (https://stackoverflow.com/a/260876)*/
+            if (!fav) {
+                fav = true;
+                (function() {
+                    var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+                    link.type = 'image/x-icon';
+                    link.rel = 'shortcut icon';
+                    link.href = 'https://files.coinmarketcap.com/static/img/coins/16x16/' + par + '.png';
+                    document.getElementsByTagName('head')[0].appendChild(link);
+                })();
+            }
+            setTimeout(update, del * 1000);
+        }
+        update();
+
+        /* Non-successful pull, refresh page to BTC tracking*/
+        function redirect() {
+            window.location.replace("https://banack.me/crypto?track=bitcoin");
+        }
+    </script>
+
+    </script>
+    <style>
+        html,
+        body {
+            height: 90%;
+            background-color: #FFFFFF;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .container_main {
+            height: 98%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            color: #1C2A39;
+        }
+
+        .header {
+            background-color: #FFFFFF;
+            position: relative;
+            height: 72px;
+            width: 100%;
+            font-size: 12px;
+            color: #5C6A79;
+        }
+
+        .footer {
+            background-color: #FFFFFF;
+            position: fixed;
+            left: 0px;
+            bottom: 0px;
+            height: 72px;
+            width: 100%;
+            font-size: 12px;
+            color: #B5C5C6;
+        }
+
+        a:link,
+        a:visited,
+        a:hover,
+        a:active {
+            color: #3498DB;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header" align="center">
+        <p>Crypto Tab Tracker | Change the URL <i>track</i> parameter to your <a href="https://coinmarketcap.com" target="_blank">desired currency</a>.</p>
+    </div>
+    <div class="footer" align="center">
+        <p>XRB @ xrb_1cwymjoodjx9okzqf59nqpdo5ab9unbp61a5reu1kaomzo7ztssdd6nh7fbx<br>
+            <a href="https://github.com/zbanack/crypto-tab-tracker" target="_blank">GitHub</a>&nbsp;&#183;&nbsp;<a href="https://twitter.com/zackbanack" target="_blank">@zackbanack</a></p>
+    </div>
+    <div class="container_main" align="center">
+        <div id="container_price"></div>
+    </div>
+</body>
+
+</html>
